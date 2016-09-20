@@ -1,9 +1,13 @@
 # Supported tags and respective `Dockerfile` links
 
--	[`2.0.16`, `2.0` (*2.0/Dockerfile*)](https://github.com/docker-library/cassandra/blob/711f62f57e181eb373910246e27036aaa14eb54f/2.0/Dockerfile)
--	[`2.1.7`, `2.1`, `latest` (*2.1/Dockerfile*)](https://github.com/docker-library/cassandra/blob/711f62f57e181eb373910246e27036aaa14eb54f/2.1/Dockerfile)
+-	[`2.1.15`, `2.1` (*2.1/Dockerfile*)](https://github.com/docker-library/cassandra/blob/ef66ec669d3930aea018f74dc58f5bd2ef5df880/2.1/Dockerfile)
+-	[`2.2.7`, `2.2`, `2` (*2.2/Dockerfile*)](https://github.com/docker-library/cassandra/blob/ef66ec669d3930aea018f74dc58f5bd2ef5df880/2.2/Dockerfile)
+-	[`3.0.8`, `3.0` (*3.0/Dockerfile*)](https://github.com/docker-library/cassandra/blob/ef66ec669d3930aea018f74dc58f5bd2ef5df880/3.0/Dockerfile)
+-	[`3.7`, `3`, `latest` (*3.7/Dockerfile*)](https://github.com/docker-library/cassandra/blob/c3c26f2efdb9874dc5b3717662462e8ca0b2d944/3.7/Dockerfile)
 
-For more information about this image and its history, please see the [relevant manifest file (`library/cassandra`)](https://github.com/docker-library/official-images/blob/master/library/cassandra) in the [`docker-library/official-images` GitHub repo](https://github.com/docker-library/official-images).
+For more information about this image and its history, please see [the relevant manifest file (`library/cassandra`)](https://github.com/docker-library/official-images/blob/master/library/cassandra). This image is updated via [pull requests to the `docker-library/official-images` GitHub repo](https://github.com/docker-library/official-images/pulls?q=label%3Alibrary%2Fcassandra).
+
+For detailed information about the virtual/transfer sizes and individual layers of each of the above supported tags, please see [the `repos/cassandra/tag-details.md` file](https://github.com/docker-library/repo-info/blob/master/repos/cassandra/tag-details.md) in [the `docker-library/repo-info` GitHub repo](https://github.com/docker-library/repo-info).
 
 # What is Cassandra?
 
@@ -11,7 +15,7 @@ Apache Cassandra is an open source distributed database management system design
 
 > [wikipedia.org/wiki/Apache_Cassandra](https://en.wikipedia.org/wiki/Apache_Cassandra)
 
-![logo](https://raw.githubusercontent.com/docker-library/docs/master/cassandra/logo.png)
+![logo](https://raw.githubusercontent.com/docker-library/docs/fb8596d619703fc556e6d56e12584d8bfdf13785/cassandra/logo.png)
 
 # How to use this image
 
@@ -19,7 +23,9 @@ Apache Cassandra is an open source distributed database management system design
 
 Starting a Cassandra instance is simple:
 
-	docker run --name some-cassandra -d cassandra:tag
+```console
+$ docker run --name some-cassandra -d cassandra:tag
+```
 
 ... where `some-cassandra` is the name you want to assign to your container and `tag` is the tag specifying the Cassandra version you want. See the list above for relevant tags.
 
@@ -27,35 +33,53 @@ Starting a Cassandra instance is simple:
 
 This image exposes the standard Cassandra ports (see the [Cassandra FAQ](https://wiki.apache.org/cassandra/FAQ#ports)), so container linking makes the Cassandra instance available to other application containers. Start your application container like this in order to link it to the Cassandra container:
 
-	docker run --name some-app --link some-cassandra:cassandra -d app-that-uses-cassandra
+```console
+$ docker run --name some-app --link some-cassandra:cassandra -d app-that-uses-cassandra
+```
 
 ## Make a cluster
 
 Using the environment variables documented below, there are two cluster scenarios: instances on the same machine and instances on separate machines. For the same machine, start the instance as described above. To start other instances, just tell each new node where the first is.
 
-	docker run --name some-cassandra2 -d -e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' some-cassandra)" cassandra:tag
+```console
+$ docker run --name some-cassandra2 -d -e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' some-cassandra)" cassandra:tag
+```
 
 ... where `some-cassandra` is the name of your original Cassandra Server container, taking advantage of `docker inspect` to get the IP address of the other container.
+
+Or you may use the docker run --link option to tell the new node where the first is:
+
+```console
+$ docker run --name some-cassandra2 -d --link some-cassandra:cassandra cassandra:tag
+```
 
 For separate machines (ie, two VMs on a cloud provider), you need to tell Cassandra what IP address to advertise to the other nodes (since the address of the container is behind the docker bridge).
 
 Assuming the first machine's IP address is `10.42.42.42` and the second's is `10.43.43.43`, start the first with exposed gossip port:
 
-	docker run --name some-cassandra -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.42.42 -p 7000:7000 cassandra:tag
+```console
+$ docker run --name some-cassandra -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.42.42 -p 7000:7000 cassandra:tag
+```
 
 Then start a Cassandra container on the second machine, with the exposed gossip port and seed pointing to the first machine:
 
-	docker run --name some-cassandra -d -e CASSANDRA_BROADCAST_ADDRESS=10.43.43.43 -p 7000:7000 -e CASSANDRA_SEEDS=10.42.42.42 cassandra:tag
+```console
+$ docker run --name some-cassandra -d -e CASSANDRA_BROADCAST_ADDRESS=10.43.43.43 -p 7000:7000 -e CASSANDRA_SEEDS=10.42.42.42 cassandra:tag
+```
 
 ## Connect to Cassandra from `cqlsh`
 
 The following command starts another Cassandra container instance and runs `cqlsh` (Cassandra Query Language Shell) against your original Cassandra container, allowing you to execute CQL statements against your database instance:
 
-	docker run -it --link some-cassandra:cassandra --rm cassandra sh -c 'exec cqlsh "$CASSANDRA_PORT_9042_TCP_ADDR"'
+```console
+$ docker run -it --link some-cassandra:cassandra --rm cassandra sh -c 'exec cqlsh "$CASSANDRA_PORT_9042_TCP_ADDR"'
+```
 
 ... or (simplified to take advantage of the `/etc/hosts` entry Docker adds for linked containers):
 
-	docker run -it --link some-cassandra:cassandra --rm cassandra cqlsh cassandra
+```console
+$ docker run -it --link some-cassandra:cassandra --rm cassandra cqlsh cassandra
+```
 
 ... where `some-cassandra` is the name of your original Cassandra Server container.
 
@@ -65,11 +89,15 @@ More information about the CQL can be found in the [Cassandra documentation](htt
 
 The `docker exec` command allows you to run commands inside a Docker container. The following command line will give you a bash shell inside your `cassandra` container:
 
-	docker exec -it some-cassandra bash
+```console
+$ docker exec -it some-cassandra bash
+```
 
 The Cassandra Server log is available through Docker's container log:
 
-	docker logs some-cassandra
+```console
+$ docker logs some-cassandra
+```
 
 ## Environment Variables
 
@@ -77,37 +105,43 @@ When you start the `cassandra` image, you can adjust the configuration of the Ca
 
 ### `CASSANDRA_LISTEN_ADDRESS`
 
-This variable is for controlling which IP address to listen for incoming connections on. The default value is `auto`, which will set the [`listen_address`](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html?scroll=reference_ds_qfg_n1r_1k__listen_address) option in `cassandra.yaml` to the IP address of the container as it starts. This default should work in most use cases.
+This variable is for controlling which IP address to listen for incoming connections on. The default value is `auto`, which will set the [`listen_address`](http://docs.datastax.com/en/cassandra/3.0/cassandra/configuration/configCassandra_yaml.html?scroll=configCassandra_yaml__listen_address) option in `cassandra.yaml` to the IP address of the container as it starts. This default should work in most use cases.
 
 ### `CASSANDRA_BROADCAST_ADDRESS`
 
-This variable is for controlling which IP address to advertise to other nodes. The default value is the velue of `CASSANDRA_LISTEN_ADDRESS`. It will set the [`broadcast_address`](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html?scroll=reference_ds_qfg_n1r_1k__broadcast_address) and [`broadcast_rpc_address`](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html?scroll=reference_ds_qfg_n1r_1k__broadcast_rpc_address) options in `cassandra.yaml`.
+This variable is for controlling which IP address to advertise to other nodes. The default value is the value of `CASSANDRA_LISTEN_ADDRESS`. It will set the [`broadcast_address`](http://docs.datastax.com/en/cassandra/3.0/cassandra/configuration/configCassandra_yaml.html?scroll=configCassandra_yaml__broadcast_address) and [`broadcast_rpc_address`](http://docs.datastax.com/en/cassandra/3.0/cassandra/configuration/configCassandra_yaml.html?scroll=configCassandra_yaml__broadcast_rpc_address) options in `cassandra.yaml`.
 
-**Note:** `rpc_address` is always set to the wildcard address (`0.0.0.0`), which means this value cannot be the wildcard address (and thus must be a specific address).
+### `CASSANDRA_RPC_ADDRESS`
+
+This variable is for controlling which address to bind the thrift rpc server to. If you do not specify an address, the wildcard address (`0.0.0.0`) will be used. It will set the [`rpc_address`](http://docs.datastax.com/en/cassandra/3.0/cassandra/configuration/configCassandra_yaml.html?scroll=configCassandra_yaml__rpc_address) option in `cassandra.yaml`.
+
+### `CASSANDRA_START_RPC`
+
+This variable is for controlling if the thrift rpc server is started. It will set the [`start_rpc`](http://docs.datastax.com/en/cassandra/3.0/cassandra/configuration/configCassandra_yaml.html?scroll=configCassandra_yaml__start_rpc) option in `cassandra.yaml`.
 
 ### `CASSANDRA_SEEDS`
 
-This variable is the comma-separated list of IP addresses used by gossip for bootstrapping new nodes joining a cluster. It will set the `seeds` value of the [`seed_provider`](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html?scroll=reference_ds_qfg_n1r_1k__seed_provider) option in `cassandra.yaml`. The `CASSANDRA_BROADCAST_ADDRESS` will be added the the seeds passed in so that the sever will talk to itself as well.
+This variable is the comma-separated list of IP addresses used by gossip for bootstrapping new nodes joining a cluster. It will set the `seeds` value of the [`seed_provider`](http://docs.datastax.com/en/cassandra/3.0/cassandra/configuration/configCassandra_yaml.html?scroll=configCassandra_yaml__seed_provider) option in `cassandra.yaml`. The `CASSANDRA_BROADCAST_ADDRESS` will be added the the seeds passed in so that the sever will talk to itself as well.
 
 ### `CASSANDRA_CLUSTER_NAME`
 
-This variable sets the name of the cluster and must be the same for all nodes in the cluster. It will set the [`cluster_name`](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html?scroll=reference_ds_qfg_n1r_1k__cluster_name) option of `cassandra.yaml`.
+This variable sets the name of the cluster and must be the same for all nodes in the cluster. It will set the [`cluster_name`](http://docs.datastax.com/en/cassandra/3.0/cassandra/configuration/configCassandra_yaml.html?scroll=configCassandra_yaml__cluster_name) option of `cassandra.yaml`.
 
 ### `CASSANDRA_NUM_TOKENS`
 
-This variable sets number of tokens for this node. It will set the [`num_tokens`](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html?scroll=reference_ds_qfg_n1r_1k__num_tokens) option of `cassandra.yaml`.
+This variable sets number of tokens for this node. It will set the [`num_tokens`](http://docs.datastax.com/en/cassandra/3.0/cassandra/configuration/configCassandra_yaml.html?scroll=configCassandra_yaml__num_tokens) option of `cassandra.yaml`.
 
 ### `CASSANDRA_DC`
 
-This variable sets the datacenter name of this node. It will set the [`dc`](http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchGossipPF_c.html) option of `cassandra-rackdc.properties`.
+This variable sets the datacenter name of this node. It will set the [`dc`](http://docs.datastax.com/en/cassandra/3.0/cassandra/architecture/archsnitchGossipPF.html) option of `cassandra-rackdc.properties`.
 
 ### `CASSANDRA_RACK`
 
-This variable sets the rack name of this node. It will set the [`rack`](http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureSnitchGossipPF_c.html) option of `cassandra-rackdc.properties`.
+This variable sets the rack name of this node. It will set the [`rack`](http://docs.datastax.com/en/cassandra/3.0/cassandra/architecture/archsnitchGossipPF.html) option of `cassandra-rackdc.properties`.
 
 ### `CASSANDRA_ENDPOINT_SNITCH`
 
-This variable sets the snitch implementation this node will use. It will set the [`endpoint_snitch`](http://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html?scroll=reference_ds_qfg_n1r_1k__endpoint_snitch) option of `cassandra.yml`.
+This variable sets the snitch implementation this node will use. It will set the [`endpoint_snitch`](http://docs.datastax.com/en/cassandra/3.0/cassandra/configuration/configCassandra_yaml.html?scroll=configCassandra_yaml__endpoint_snitch) option of `cassandra.yml`.
 
 # Caveats
 
@@ -123,13 +157,17 @@ The Docker documentation is a good starting point for understanding the differen
 1.	Create a data directory on a suitable volume on your host system, e.g. `/my/own/datadir`.
 2.	Start your `cassandra` container like this:
 
-	docker run --name some-cassandra -v /my/own/datadir:/var/lib/cassandra/data -d cassandra:tag
+	```console
+	$ docker run --name some-cassandra -v /my/own/datadir:/var/lib/cassandra -d cassandra:tag
+	```
 
-The `-v /my/own/datadir:/var/lib/cassandra/data` part of the command mounts the `/my/own/datadir` directory from the underlying host system as `/var/lib/cassandra/data` inside the container, where Cassandra by default will write its data files.
+The `-v /my/own/datadir:/var/lib/cassandra` part of the command mounts the `/my/own/datadir` directory from the underlying host system as `/var/lib/cassandra` inside the container, where Cassandra by default will write its data files.
 
 Note that users on host systems with SELinux enabled may see issues with this. The current workaround is to assign the relevant SELinux policy type to the new data directory so that the container will be allowed to access it:
 
-	chcon -Rt svirt_sandbox_file_t /my/own/datadir
+```console
+$ chcon -Rt svirt_sandbox_file_t /my/own/datadir
+```
 
 ## No connections until Cassandra init completes
 
@@ -137,9 +175,11 @@ If there is no database initialized when the container starts, then a default da
 
 # Supported Docker versions
 
-This image is officially supported on Docker version 1.7.0.
+This image is officially supported on Docker version 1.12.1.
 
-Support for older versions (down to 1.0) is provided on a best-effort basis.
+Support for older versions (down to 1.6) is provided on a best-effort basis.
+
+Please see [the Docker installation documentation](https://docs.docker.com/installation/) for details on how to upgrade your Docker daemon.
 
 # User Feedback
 
@@ -149,7 +189,7 @@ Documentation for this image is stored in the [`cassandra/` directory](https://g
 
 ## Issues
 
-If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/docker-library/cassandra/issues).
+If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/docker-library/cassandra/issues). If the issue is related to a CVE, please check for [a `cve-tracker` issue on the `official-images` repository first](https://github.com/docker-library/official-images/issues?q=label%3Acve-tracker).
 
 You can also reach many of the official image maintainers via the `#docker-library` IRC channel on [Freenode](https://freenode.net).
 

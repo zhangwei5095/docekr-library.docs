@@ -1,11 +1,12 @@
 # Supported tags and respective `Dockerfile` links
 
--	[`4.7.4`, `4.7` (*4.7/Dockerfile*)](https://github.com/docker-library/gcc/blob/4b70286ab13a6c4c08efb62983f907d3fa9b1462/4.7/Dockerfile)
--	[`4.8.5`, `4.8` (*4.8/Dockerfile*)](https://github.com/docker-library/gcc/blob/555b0facd42d0b7742494edf3b8d230e4a6e1b0b/4.8/Dockerfile)
--	[`4.9.3`, `4.9` (*4.9/Dockerfile*)](https://github.com/docker-library/gcc/blob/555b0facd42d0b7742494edf3b8d230e4a6e1b0b/4.9/Dockerfile)
--	[`5.1.0`, `5.1`, `latest` (*5.1/Dockerfile*)](https://github.com/docker-library/gcc/blob/4b70286ab13a6c4c08efb62983f907d3fa9b1462/5.1/Dockerfile)
+-	[`4.9.4`, `4.9`, `4` (*4.9/Dockerfile*)](https://github.com/docker-library/gcc/blob/8c7687860cdd4ef9227c249ca4587984e2636a55/4.9/Dockerfile)
+-	[`5.4.0`, `5.4`, `5` (*5/Dockerfile*)](https://github.com/docker-library/gcc/blob/8c7687860cdd4ef9227c249ca4587984e2636a55/5/Dockerfile)
+-	[`6.2.0`, `6.2`, `6`, `latest` (*6/Dockerfile*)](https://github.com/docker-library/gcc/blob/8c7687860cdd4ef9227c249ca4587984e2636a55/6/Dockerfile)
 
-For more information about this image and its history, please see the [relevant manifest file (`library/gcc`)](https://github.com/docker-library/official-images/blob/master/library/gcc) in the [`docker-library/official-images` GitHub repo](https://github.com/docker-library/official-images).
+For more information about this image and its history, please see [the relevant manifest file (`library/gcc`)](https://github.com/docker-library/official-images/blob/master/library/gcc). This image is updated via [pull requests to the `docker-library/official-images` GitHub repo](https://github.com/docker-library/official-images/pulls?q=label%3Alibrary%2Fgcc).
+
+For detailed information about the virtual/transfer sizes and individual layers of each of the above supported tags, please see [the `repos/gcc/tag-details.md` file](https://github.com/docker-library/repo-info/blob/master/repos/gcc/tag-details.md) in [the `docker-library/repo-info` GitHub repo](https://github.com/docker-library/repo-info).
 
 # What is GCC?
 
@@ -13,7 +14,7 @@ The GNU Compiler Collection (GCC) is a compiler system produced by the GNU Proje
 
 > [wikipedia.org/wiki/GNU_Compiler_Collection](https://en.wikipedia.org/wiki/GNU_Compiler_Collection)
 
-![logo](https://raw.githubusercontent.com/docker-library/docs/master/gcc/logo.png)
+![logo](https://raw.githubusercontent.com/docker-library/docs/60b29a700d22613526487c7d5fcf4d723ed2ef0a/gcc/logo.png)
 
 # How to use this image
 
@@ -21,26 +22,34 @@ The GNU Compiler Collection (GCC) is a compiler system produced by the GNU Proje
 
 The most straightforward way to use this image is to use a gcc container as both the build and runtime environment. In your `Dockerfile`, writing something along the lines of the following will compile and run your project:
 
-	FROM gcc:4.9
-	COPY . /usr/src/myapp
-	WORKDIR /usr/src/myapp
-	RUN gcc -o myapp main.c
-	CMD ["./myapp"]
+```dockerfile
+FROM gcc:4.9
+COPY . /usr/src/myapp
+WORKDIR /usr/src/myapp
+RUN gcc -o myapp main.c
+CMD ["./myapp"]
+```
 
 Then, build and run the Docker image:
 
-	docker build -t my-gcc-app .
-	docker run -it --rm --name my-running-app my-gcc-app
+```console
+$ docker build -t my-gcc-app .
+$ docker run -it --rm --name my-running-app my-gcc-app
+```
 
 ## Compile your app inside the Docker container
 
 There may be occasions where it is not appropriate to run your app inside a container. To compile, but not run your app inside the Docker instance, you can write something like:
 
-	docker run --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp gcc:4.9 gcc -o myapp myapp.c
+```console
+$ docker run --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp gcc:4.9 gcc -o myapp myapp.c
+```
 
 This will add your current directory, as a volume, to the container, set the working directory to the volume, and run the command `gcc -o myapp myapp.c.` This tells gcc to compile the code in `myapp.c` and output the executable to myapp. Alternatively, if you have a `Makefile`, you can instead run the `make` command inside your container:
 
-	docker run --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp gcc:4.9 make
+```console
+$ docker run --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp gcc:4.9 make
+```
 
 # License
 
@@ -48,9 +57,11 @@ View [license information](https://gcc.gnu.org/viewcvs/gcc/trunk/gcc/COPYING3?vi
 
 # Supported Docker versions
 
-This image is officially supported on Docker version 1.7.0.
+This image is officially supported on Docker version 1.12.1.
 
-Support for older versions (down to 1.0) is provided on a best-effort basis.
+Support for older versions (down to 1.6) is provided on a best-effort basis.
+
+Please see [the Docker installation documentation](https://docs.docker.com/installation/) for details on how to upgrade your Docker daemon.
 
 # User Feedback
 
@@ -60,7 +71,7 @@ Documentation for this image is stored in the [`gcc/` directory](https://github.
 
 ## Issues
 
-If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/docker-library/gcc/issues).
+If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/docker-library/gcc/issues). If the issue is related to a CVE, please check for [a `cve-tracker` issue on the `official-images` repository first](https://github.com/docker-library/official-images/issues?q=label%3Acve-tracker).
 
 You can also reach many of the official image maintainers via the `#docker-library` IRC channel on [Freenode](https://freenode.net).
 

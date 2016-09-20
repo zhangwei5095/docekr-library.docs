@@ -10,8 +10,10 @@ Ruby is a dynamic, reflective, object-oriented, general-purpose, open-source pro
 
 ## Create a `Dockerfile` in your Ruby app project
 
-	FROM ruby:2.1-onbuild
-	CMD ["./your-daemon-or-script.rb"]
+```dockerfile
+FROM ruby:2.1-onbuild
+CMD ["./your-daemon-or-script.rb"]
+```
 
 Put this file in the root of your app, next to the `Gemfile`.
 
@@ -20,17 +22,27 @@ bundle install`.
 
 You can then build and run the Ruby image:
 
-	docker build -t my-ruby-app .
-	docker run -it --name my-running-script my-ruby-app
+```console
+$ docker build -t my-ruby-app .
+$ docker run -it --name my-running-script my-ruby-app
+```
 
 ### Generate a `Gemfile.lock`
 
 The `onbuild` tag expects a `Gemfile.lock` in your app directory. This `docker run` will help you generate one. Run it in the root of your app, next to the `Gemfile`:
 
-	docker run --rm -v "$PWD":/usr/src/app -w /usr/src/app ruby:2.1 bundle install
+```console
+$ docker run --rm -v "$PWD":/usr/src/app -w /usr/src/app ruby:2.1 bundle install
+```
 
 ## Run a single Ruby script
 
 For many simple, single file projects, you may find it inconvenient to write a complete `Dockerfile`. In such cases, you can run a Ruby script by using the Ruby Docker image directly:
 
-	docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp ruby:2.1 ruby your-daemon-or-script.rb
+```console
+$ docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp ruby:2.1 ruby your-daemon-or-script.rb
+```
+
+## Encoding
+
+By default, Ruby inherits the locale of the environment in which it is run. For most users running Ruby on their desktop systems, that means it's likely using some variation of `*.UTF-8` (`en_US.UTF-8`, etc). In Docker however, the default locale is `C`, which can have unexpected results. If your application needs to interact with UTF-8, it is recommended that you explicitly adjust the locale of your image/container via `-e LANG=C.UTF-8` or `ENV LANG C.UTF-8`.

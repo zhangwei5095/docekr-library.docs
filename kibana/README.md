@@ -1,9 +1,16 @@
 # Supported tags and respective `Dockerfile` links
 
--	[`4.0.3`, `4.0` (*4.0/Dockerfile*)](https://github.com/docker-library/kibana/blob/0ffeed9bb61036fca3f23fa4f9208b90a484f150/4.0/Dockerfile)
--	[`4.1.1`, `4.1`, `4`, `latest` (*4.1/Dockerfile*)](https://github.com/docker-library/kibana/blob/9c61015ec5a8f9a7da32a9a3e28f9a0caf29fc8b/4.1/Dockerfile)
+-	[`4.1.11`, `4.1` (*4.1/Dockerfile*)](https://github.com/docker-library/kibana/blob/7ce21f8aa1e58443c3031fdbdf83a08ce34e49a4/4.1/Dockerfile)
+-	[`4.2.2`, `4.2` (*4.2/Dockerfile*)](https://github.com/docker-library/kibana/blob/9fc787378f38bc25616d7118741a74b42402d344/4.2/Dockerfile)
+-	[`4.3.3`, `4.3` (*4.3/Dockerfile*)](https://github.com/docker-library/kibana/blob/9fc787378f38bc25616d7118741a74b42402d344/4.3/Dockerfile)
+-	[`4.4.2`, `4.4` (*4.4/Dockerfile*)](https://github.com/docker-library/kibana/blob/9fc787378f38bc25616d7118741a74b42402d344/4.4/Dockerfile)
+-	[`4.5.4`, `4.5` (*4.5/Dockerfile*)](https://github.com/docker-library/kibana/blob/7ce21f8aa1e58443c3031fdbdf83a08ce34e49a4/4.5/Dockerfile)
+-	[`4.6.1`, `4.6`, `4`, `latest` (*4.6/Dockerfile*)](https://github.com/docker-library/kibana/blob/e930401355dc9b268b3e7d036794263a8e0f7a82/4.6/Dockerfile)
+-	[`5.0.0-alpha5`, `5.0.0`, `5.0`, `5` (*5.0/Dockerfile*)](https://github.com/docker-library/kibana/blob/f1e01a0c5d64b1eea3c9d90a2cba93d9f3924bd0/5.0/Dockerfile)
 
-For more information about this image and its history, please see the [relevant manifest file (`library/kibana`)](https://github.com/docker-library/official-images/blob/master/library/kibana) in the [`docker-library/official-images` GitHub repo](https://github.com/docker-library/official-images).
+For more information about this image and its history, please see [the relevant manifest file (`library/kibana`)](https://github.com/docker-library/official-images/blob/master/library/kibana). This image is updated via [pull requests to the `docker-library/official-images` GitHub repo](https://github.com/docker-library/official-images/pulls?q=label%3Alibrary%2Fkibana).
+
+For detailed information about the virtual/transfer sizes and individual layers of each of the above supported tags, please see [the `repos/kibana/tag-details.md` file](https://github.com/docker-library/repo-info/blob/master/repos/kibana/tag-details.md) in [the `docker-library/repo-info` GitHub repo](https://github.com/docker-library/repo-info).
 
 # What is Kibana?
 
@@ -13,21 +20,33 @@ Kibana is a registered trademark of Elasticsearch BV.
 
 > [wikipedia.org/wiki/Kibana](https://en.wikipedia.org/wiki/Kibana)
 
-![logo](https://raw.githubusercontent.com/docker-library/docs/master/kibana/logo.png)
+![logo](https://raw.githubusercontent.com/docker-library/docs/8965672c23522a2196bba6a431a8746c10116304/kibana/logo.png)
 
 # How to use this image
 
 You can run the default `kibana` command simply:
 
-	docker run --link some-elasticsearch:elasticsearch -d kibana
+```console
+$ docker run --link some-elasticsearch:elasticsearch -d kibana
+```
 
 You can also pass in additional flags to `kibana`:
 
-	docker run --link some-elasticsearch:elasticsearch -d kibana --plugins /somewhere/else
+```console
+$ docker run --link some-elasticsearch:elasticsearch -d kibana --plugins /somewhere/else
+```
 
 This image includes `EXPOSE 5601` ([default `port`](https://www.elastic.co/guide/en/kibana/current/_setting_kibana_server_properties.html)). If you'd like to be able to access the instance from the host without the container's IP, standard port mappings can be used:
 
-	docker run --name some-kibana --link some-elasticsearch:elasticsearch -p 5601:5601 -d kibana
+```console
+$ docker run --name some-kibana --link some-elasticsearch:elasticsearch -p 5601:5601 -d kibana
+```
+
+You can also provide the address of elasticsearch via `ELASTICSEARCH_URL` environnement variable:
+
+```console
+$ docker run --name some-kibana -e ELASTICSEARCH_URL=http://some-elasticsearch:9200 -p 5601:5601 -d kibana
+```
 
 Then, access it via `http://localhost:5601` or `http://host-ip:5601` in a browser.
 
@@ -37,9 +56,11 @@ View [license information](https://github.com/elastic/kibana/blob/4557a6fc0ba08c
 
 # Supported Docker versions
 
-This image is officially supported on Docker version 1.7.0.
+This image is officially supported on Docker version 1.12.1.
 
-Support for older versions (down to 1.0) is provided on a best-effort basis.
+Support for older versions (down to 1.6) is provided on a best-effort basis.
+
+Please see [the Docker installation documentation](https://docs.docker.com/installation/) for details on how to upgrade your Docker daemon.
 
 # User Feedback
 
@@ -49,7 +70,7 @@ Documentation for this image is stored in the [`kibana/` directory](https://gith
 
 ## Issues
 
-If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/docker-library/kibana/issues).
+If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/docker-library/kibana/issues). If the issue is related to a CVE, please check for [a `cve-tracker` issue on the `official-images` repository first](https://github.com/docker-library/official-images/issues?q=label%3Acve-tracker).
 
 You can also reach many of the official image maintainers via the `#docker-library` IRC channel on [Freenode](https://freenode.net).
 

@@ -1,11 +1,18 @@
 # Supported tags and respective `Dockerfile` links
 
--	[`1.3.9`, `1.3` (*1.3/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/0d458a654cf9f7b7199f4faf4a838e6928ee954e/1.3/Dockerfile)
--	[`1.4.5`, `1.4` (*1.4/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/0d458a654cf9f7b7199f4faf4a838e6928ee954e/1.4/Dockerfile)
--	[`1.5.2`, `1.5` (*1.5/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/0d458a654cf9f7b7199f4faf4a838e6928ee954e/1.5/Dockerfile)
--	[`1.6.0`, `1.6`, `1`, `latest` (*1.6/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/f37f98c251bd4bc92573df82c3af70d819f052bb/1.6/Dockerfile)
+-	[`1.5.2`, `1.5` (*1.5/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/2536978b4ef8b58866e933f7e6918ba7161802ac/1.5/Dockerfile)
+-	[`1.6.2`, `1.6` (*1.6/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/2536978b4ef8b58866e933f7e6918ba7161802ac/1.6/Dockerfile)
+-	[`1.7.5`, `1.7`, `1` (*1.7/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/2536978b4ef8b58866e933f7e6918ba7161802ac/1.7/Dockerfile)
+-	[`2.0.2`, `2.0` (*2.0/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/2536978b4ef8b58866e933f7e6918ba7161802ac/2.0/Dockerfile)
+-	[`2.1.2`, `2.1` (*2.1/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/2536978b4ef8b58866e933f7e6918ba7161802ac/2.1/Dockerfile)
+-	[`2.2.2`, `2.2` (*2.2/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/2536978b4ef8b58866e933f7e6918ba7161802ac/2.2/Dockerfile)
+-	[`2.3.5`, `2.3` (*2.3/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/2536978b4ef8b58866e933f7e6918ba7161802ac/2.3/Dockerfile)
+-	[`2.4.0`, `2.4`, `2`, `latest` (*2.4/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/7a502275158cac1affa4372eab937a21913cd3e0/2.4/Dockerfile)
+-	[`5.0.0-alpha5`, `5.0.0`, `5.0`, `5` (*5.0/Dockerfile*)](https://github.com/docker-library/elasticsearch/blob/2536978b4ef8b58866e933f7e6918ba7161802ac/5.0/Dockerfile)
 
-For more information about this image and its history, please see the [relevant manifest file (`library/elasticsearch`)](https://github.com/docker-library/official-images/blob/master/library/elasticsearch) in the [`docker-library/official-images` GitHub repo](https://github.com/docker-library/official-images).
+For more information about this image and its history, please see [the relevant manifest file (`library/elasticsearch`)](https://github.com/docker-library/official-images/blob/master/library/elasticsearch). This image is updated via [pull requests to the `docker-library/official-images` GitHub repo](https://github.com/docker-library/official-images/pulls?q=label%3Alibrary%2Felasticsearch).
+
+For detailed information about the virtual/transfer sizes and individual layers of each of the above supported tags, please see [the `repos/elasticsearch/tag-details.md` file](https://github.com/docker-library/repo-info/blob/master/repos/elasticsearch/tag-details.md) in [the `docker-library/repo-info` GitHub repo](https://github.com/docker-library/repo-info).
 
 # What is Elasticsearch?
 
@@ -15,25 +22,33 @@ Elasticsearch is a registered trademark of Elasticsearch BV.
 
 > [wikipedia.org/wiki/Elasticsearch](https://en.wikipedia.org/wiki/Elasticsearch)
 
-![logo](https://raw.githubusercontent.com/docker-library/docs/master/elasticsearch/logo.png)
+![logo](https://raw.githubusercontent.com/docker-library/docs/7688e51a41c0c10dca4e6c376be886ce64b9620f/elasticsearch/logo.png)
 
 # How to use this image
 
 You can run the default `elasticsearch` command simply:
 
-	docker run -d elasticsearch
+```console
+$ docker run -d elasticsearch
+```
 
 You can also pass in additional flags to `elasticsearch`:
 
-	docker run -d elasticsearch elasticsearch -Des.node.name="TestNode"
+```console
+$ docker run -d elasticsearch -Des.node.name="TestNode"
+```
 
 This image comes with a default set of configuration files for `elasticsearch`, but if you want to provide your own set of configuration files, you can do so via a volume mounted at `/usr/share/elasticsearch/config`:
 
-	docker run -d -v "$PWD/config":/usr/share/elasticsearch/config elasticsearch
+```console
+$ docker run -d -v "$PWD/config":/usr/share/elasticsearch/config elasticsearch
+```
 
 This image is configured with a volume at `/usr/share/elasticsearch/data` to hold the persisted index data. Use that path if you would like to keep the data in a mounted volume:
 
-	docker run -d -v "$PWD/esdata":/usr/share/elasticsearch/data elasticsearch
+```console
+$ docker run -d -v "$PWD/esdata":/usr/share/elasticsearch/data elasticsearch
+```
 
 This image includes `EXPOSE 9200 9300` ([default `http.port`](http://www.elastic.co/guide/en/elasticsearch/reference/1.5/modules-http.html)), so standard container linking will make it automatically available to the linked containers.
 
@@ -43,9 +58,11 @@ View [license information](https://github.com/elasticsearch/elasticsearch/blob/6
 
 # Supported Docker versions
 
-This image is officially supported on Docker version 1.7.0.
+This image is officially supported on Docker version 1.12.1.
 
-Support for older versions (down to 1.0) is provided on a best-effort basis.
+Support for older versions (down to 1.6) is provided on a best-effort basis.
+
+Please see [the Docker installation documentation](https://docs.docker.com/installation/) for details on how to upgrade your Docker daemon.
 
 # User Feedback
 
@@ -55,7 +72,7 @@ Documentation for this image is stored in the [`elasticsearch/` directory](https
 
 ## Issues
 
-If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/docker-library/elasticsearch/issues).
+If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/docker-library/elasticsearch/issues). If the issue is related to a CVE, please check for [a `cve-tracker` issue on the `official-images` repository first](https://github.com/docker-library/official-images/issues?q=label%3Acve-tracker).
 
 You can also reach many of the official image maintainers via the `#docker-library` IRC channel on [Freenode](https://freenode.net).
 
